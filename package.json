@@ -4,6 +4,8 @@
   "description": "API to Access Information about Virginia's COVID Data ",
   "main": "app.js",
   "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
     "mongoose": "^6.0.7"
   },
   "devDependencies": {},
