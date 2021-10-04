@@ -4,6 +4,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const app = express();
+const updateDB = require('./utils/updateDB.js');
 
 ////////////////////////////////////////////
 // SETUP
@@ -32,4 +33,7 @@ mongoose
 // SERVER
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
+
+  updateDB();
+  // Add promise to call update DB once per day.
 });
