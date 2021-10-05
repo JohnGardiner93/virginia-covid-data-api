@@ -4,7 +4,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const app = express();
-const updateDB = require('./utils/updateDB.js');
+const updateDB = require('./utils/getLatestData.js');
 
 ////////////////////////////////////////////
 // SETUP
