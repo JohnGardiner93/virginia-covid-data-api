@@ -17,6 +17,7 @@ This project allows users request information regarding Virginia's COVID informa
 - [Usage](#-usage)
 - [Results](#-results)
 - [Installation](#-installation)
+- [Future Implementation](#-future-implementation)
 
 ## 🔴 Description
 
@@ -44,6 +45,10 @@ Usage documentation will be provided as the project progresses. Planned API call
 
 Will be populated as project progresses.
 
-# 🚀 Installation
+## 🚀 Installation
 
 Will not require installation.
+
+## 🔮 Future Implementation
+
+The initial version of this project (v1) will use data aggregation pipelines to generate the results for a request. The next iteration of this project (v2) will use denormalized data in an effort to save time. A study will be done and displayed to show the advantages of each approach.
