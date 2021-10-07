@@ -6,7 +6,7 @@ dotenv.config(); //Read .env
 dotenv.config({ path: './config.env' });
 
 const mongoose = require('mongoose');
-const app = express();
+const app = require('./app');
 const updateDB = require('./utils/getLatestData.js');
 
 ////////////////////////////////////////////
