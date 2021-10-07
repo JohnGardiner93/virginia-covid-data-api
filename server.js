@@ -1,17 +1,16 @@
 ////////////////////////////////////////////
 // MODULES
-const express = require('express');
 const dotenv = require('dotenv');
+// Environment Variables
+dotenv.config(); //Read .env
+dotenv.config({ path: './config.env' });
+
 const mongoose = require('mongoose');
 const app = express();
 const updateDB = require('./utils/getLatestData.js');
 
 ////////////////////////////////////////////
 // SETUP
-// Environment Variables
-dotenv.config(); //Read .env
-dotenv.config({ path: './config.env' });
-
 // Server Config
 const port = process.env.PORT || 3000;
 
@@ -27,13 +26,13 @@ mongoose
     // useCreateIndex: true,
     // useFindandModify: false,
   })
-  .then(console.log('I did it'));
+  .then(console.log('DB Connection Successful'));
 
 ////////////////////////////////////////////
 // SERVER
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 
-  updateDB();
-  // Add promise to call update DB once per day.
+  // updateDB();
+  // TODO: Add promise to call update DB once per day.
 });
