@@ -69,10 +69,23 @@ exports.getReport = async (req, res, next) => {
 };
 
 exports.updateReport = async (req, res, next) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined (updateReport)',
-  });
+  try {
+    const report = await Report.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(201).json({
+      status: 'success',
+      data: {
+        report: report,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'error',
+      message: `Report retreival failed: ${error.message}`,
+    });
+  }
 };
 
 exports.deleteReport = async (req, res, next) => {
