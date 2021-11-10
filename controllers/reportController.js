@@ -89,8 +89,17 @@ exports.updateReport = async (req, res, next) => {
 };
 
 exports.deleteReport = async (req, res, next) => {
-  res.status(500).json({
+  try {
+    await Report.findByIdAndDelete(req.params.id);
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (error) {
+    res.status(404).json({
     status: 'error',
-    message: 'This route is not yet defined (deleteReport)',
+      message: `Report not deleted: ${error.message}`,
   });
+  }
 };
