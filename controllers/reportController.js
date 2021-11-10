@@ -52,10 +52,20 @@ exports.createReport = async (req, res) => {
 };
 
 exports.getReport = async (req, res, next) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined (getReport)',
-  });
+  try {
+    const report = await Report.findById(req.params.id);
+    res.status(201).json({
+      status: 'success',
+      data: {
+        report: report,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'error',
+      message: `Report retreival failed: ${error.message}`,
+    });
+  }
 };
 
 exports.updateReport = async (req, res, next) => {
