@@ -17,7 +17,7 @@ exports.getAllReports = async (req, res, next) => {
 
     const reports = await features.query;
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
       length: reports.length,
       data: {
@@ -54,7 +54,7 @@ exports.createReport = async (req, res) => {
 exports.getReport = async (req, res, next) => {
   try {
     const report = await Report.findById(req.params.id);
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
       data: {
         report: report,
@@ -81,9 +81,9 @@ exports.updateReport = async (req, res, next) => {
       },
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(400).json({
       status: 'error',
-      message: `Report retreival failed: ${error.message}`,
+      message: `Report update failed: ${error.message}`,
     });
   }
 };
@@ -98,8 +98,8 @@ exports.deleteReport = async (req, res, next) => {
     });
   } catch (error) {
     res.status(404).json({
-    status: 'error',
+      status: 'error',
       message: `Report not deleted: ${error.message}`,
-  });
+    });
   }
 };
