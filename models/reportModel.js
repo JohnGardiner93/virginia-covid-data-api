@@ -3,18 +3,18 @@
 const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({
-  report_date: {
+  reportDate: {
     type: Date,
-    required: [true, 'A report must have a report_date'],
+    required: [true, 'A report must have a reportDate'],
   },
-  health_district: {
+  healthDistrict: {
     type: String,
-    required: [true, 'A report must have a health_district'],
+    required: [true, 'A report must have a healthDistrict'],
     trim: true,
   },
-  age_group: {
+  ageGroup: {
     type: String,
-    required: [true, 'A report must have a age_group'],
+    required: [true, 'A report must have a ageGroup'],
     enum: {
       values: [
         '0-9 Years',
@@ -30,27 +30,27 @@ const reportSchema = new mongoose.Schema({
       message: 'Not a valid age group. See documentation.',
     },
   },
-  number_of_cases: {
+  numberOfCases: {
     type: Number,
-    required: [true, 'A report must have a number_of_cases'],
+    required: [true, 'A report must have a numberOfCases'],
   },
-  number_of_hospitalizations: {
+  numberOfHospitalizations: {
     type: Number,
-    required: [true, 'A report must have a number_of_hospitalizations'],
+    required: [true, 'A report must have a numberOfHospitalizations'],
   },
-  number_of_deaths: {
+  numberOfDeaths: {
     type: Number,
-    required: [true, 'A report must have a number_of_deaths'],
+    required: [true, 'A report must have a numberOfDeaths'],
   },
 });
 
 reportSchema.virtual('case_fatality_ratio').get(function () {
-  const ratio = this.number_of_cases / this.number_of_deaths;
+  const ratio = this.numberOfCases / this.numberOfDeaths;
   return Number(ratio.toPrecision(1));
 });
 
 reportSchema.index(
-  { report_date: 1, health_district: 1, age_group: 1 },
+  { reportDate: 1, healthDistrict: 1, ageGroup: 1 },
   { unique: true }
 );
 
