@@ -7,9 +7,9 @@ const reportSchema = new mongoose.Schema({
     type: Date,
     required: [true, 'A report must have a reportDate'],
   },
-  healthDistrict: {
+  region: {
     type: String,
-    required: [true, 'A report must have a healthDistrict'],
+    required: [true, 'A report must have a region'],
     trim: true,
   },
   ageGroup: {
@@ -49,10 +49,7 @@ reportSchema.virtual('case_fatality_ratio').get(function () {
   return Number(ratio.toPrecision(1));
 });
 
-reportSchema.index(
-  { reportDate: 1, healthDistrict: 1, ageGroup: 1 },
-  { unique: true }
-);
+reportSchema.index({ reportDate: 1, region: 1, ageGroup: 1 }, { unique: true });
 
 const Report = mongoose.model('Report', reportSchema);
 
