@@ -12,6 +12,9 @@ router
   .route('/')
   .get(reportController.getAllReports)
   .post(reportController.createReport);
+
+router.route('/age-groups').get(reportController.aggregateAgeGroups);
+
 router
   .route('/:id')
   .get(reportController.getReport)

@@ -103,3 +103,102 @@ exports.deleteReport = async (req, res, next) => {
     });
   }
 };
+
+exports.aggregateAgeGroups = async (req, res, next) => {
+  try {
+    // console.log(req.body);
+    const ageGroups = await Report.aggregate([
+      {
+        $bucket: {
+          groupBy: '$ageGroup',
+          boundaries: [
+            '0-9 Years',
+            '10-19 Years',
+            '20-29 Years',
+            '30-39 Years',
+            '40-49 Years',
+            '50-59 Years',
+            '60-69 Years',
+            '70-79 Years',
+            '80+ Years',
+          ],
+          default: 'Other',
+          output: {
+            regionData: {
+              $push: {
+                region: '$region',
+                numberOfCases: '$numberOfCases',
+                numberOfHospitalizations: '$numberOfHospitalizations',
+                numberOfDeaths: '$numberOfDeaths',
+                hospitalizationRate: {
+                  $round: [
+                    {
+                      $divide: ['$numberOfHospitalizations', '$numberOfCases'],
+                    },
+                    +process.env.DECIMAL_PLACES,
+                  ],
+                },
+                deathPerHospitalizationRate: {
+                  $round: [
+                    {
+                      $divide: ['$numberOfDeaths', '$numberOfHospitalizations'],
+                    },
+                    +process.env.DECIMAL_PLACES,
+                  ],
+                },
+                deathPerCaseRate: {
+                  $round: [
+                    { $divide: ['$numberOfDeaths', '$numberOfCases'] },
+                    +process.env.DECIMAL_PLACES,
+                  ],
+                },
+              },
+            },
+            numberOfCases: { $sum: '$numberOfCases' },
+            numberOfHospitalizations: { $sum: '$numberOfHospitalizations' },
+            numberOfDeaths: { $sum: '$numberOfHospitalizations' },
+          },
+        },
+      },
+      // {
+      //   $addFields: {
+      //     hospitalizationRate: {
+      //       $round: [
+      //         { $divide: ['$numberOfHospitalizations', '$numberOfCases'] },
+      //         +process.env.DECIMAL_PLACES,
+      //       ],
+      //     },
+      //     deathPerHospitalizationRate: {
+      //       $round: [
+      //         { $divide: ['$numberOfDeaths', '$numberOfHospitalizations'] },
+      //         +process.env.DECIMAL_PLACES,
+      //       ],
+      //     },
+      //     deathPerCaseRate: {
+      //       $round: [
+      //         { $divide: ['$numberOfDeaths', '$numberOfCases'] },
+      //         +process.env.DECIMAL_PLACES,
+      //       ],
+      //     },
+      //   },
+      // },
+      // {
+      //   $sort: { ageGroup: -1 },
+      // },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      length: ageGroups.length,
+      data: {
+        ageGroups,
+      },
+    });
+    next();
+  } catch (error) {
+    res.status(404).json({
+      status: 'error',
+      message: `Could not retrieve reports: ${error.message}`,
+    });
+  }
+};
