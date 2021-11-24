@@ -104,6 +104,21 @@ exports.deleteReport = async (req, res, next) => {
   }
 };
 
+exports.deleteAllReports = async (req, res, next) => {
+  try {
+    await Report.deleteMany({});
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'error',
+      message: `Report not deleted: ${error.message}`,
+    });
+  }
+};
+
 exports.aggregateAgeGroups = async (req, res, next) => {
   try {
     // console.log(req.body);
