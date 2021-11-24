@@ -7,7 +7,7 @@ dotenv.config({ path: './config.env' });
 
 const mongoose = require('mongoose');
 const app = require('./app');
-const updateDB = require('./utils/getLatestData.js');
+const updateDatabase = require('./utils/updateDatabase.js');
 
 ////////////////////////////////////////////
 // SETUP
@@ -32,7 +32,6 @@ mongoose
 // SERVER
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
-
-  // updateDB();
+  updateDatabase();
   // TODO: Add promise to call update DB once per day.
 });
