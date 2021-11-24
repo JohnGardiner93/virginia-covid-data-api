@@ -26,6 +26,7 @@ const reportSchema = new mongoose.Schema({
         '60-69 Years',
         '70-79 Years',
         '80+ Years',
+        'Missing',
       ],
       message: 'Not a valid age group. See documentation.',
     },
