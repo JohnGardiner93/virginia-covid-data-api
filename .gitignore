@@ -1,3 +1,5 @@
 node_modules
 .env
-dataDump.json
+/dev-data
+log.json
+nodemon.json
