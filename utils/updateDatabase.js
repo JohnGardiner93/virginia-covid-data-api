@@ -40,7 +40,7 @@ module.exports = async function () {
     const refactoredReports = await refactorExternalData(reports, dataDump);
 
     await clearCollections();
-    await addDataToDatabase(refactoredReports, dataDump);
+    await addDataToDatabase(refactoredReports, 'report', dataDump);
 
     // TODO: region aggreation
     // TODO: age group aggreation
@@ -142,27 +142,44 @@ const clearCollections = async function () {
   }
 };
 
-// Adds report data to the Report collection. After that is complete, adds aggregated Age Group and Region data to their respective collections (thus denormalizing the data)
-const addDataToDatabase = async function (reports, dataDump = false) {
+// Adds data to the appropriate collection.
+const addDataToDatabase = async function (dataset, datatype, dataDump = false) {
   try {
-    const erroredReports = [];
-    for await (const report of reports) {
+    // Guard Clause
+    if (
+      datatype !== 'report' &&
+      datatype !== 'ageGroup' &&
+      datatype !== 'region'
+    )
+      throw new Error('Invalid datatype. Cannot upload to database');
+
+    // Data upload
+    const erroredUploads = [];
+
+    for await (const item of dataset) {
       try {
-        const newReport = await Report.create(report);
-        // TODO: Should I do something with newReport?
+        if (datatype === 'report') await Report.create(item);
+        if (datatype === 'ageGroup') await AgeGroup.create(item);
+        if (datatype === 'region') await Region.create(item);
       } catch (error) {
-        console.log(`Report not added: ${report}`);
-        erroredReports.push(report);
+        console.log(`Item not added: ${item}`);
+        console.log(`Error: ${error}`);
+        erroredUploads.push(item);
       }
     }
 
     if (dataDump) {
-      const filePath = process.env.DEBUG_DATA_PATH + 'dataUploadErrorDump.json';
-      await fs.promises.writeFile(filePath, JSON.stringify(erroredReports));
-      console.log('Data retrieve complete');
+      const filePath =
+        process.env.DEBUG_DATA_PATH +
+        String(datatype) +
+        'DataUploadErrorDump.json';
+      await fs.promises.writeFile(filePath, JSON.stringify(erroredUploads));
+      console.log(`${datatype} data upload complete`);
     }
+
+    return erroredUploads;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
