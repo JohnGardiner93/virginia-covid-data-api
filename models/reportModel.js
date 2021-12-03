@@ -45,7 +45,7 @@ const reportSchema = new mongoose.Schema({
   },
 });
 
-reportSchema.virtual('case_fatality_ratio').get(function () {
+reportSchema.virtual('caseFatalityRatio').get(function () {
   const ratio = this.numberOfCases / this.numberOfDeaths;
   return Number(ratio.toPrecision(1));
 });
