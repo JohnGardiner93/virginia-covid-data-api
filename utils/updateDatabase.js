@@ -15,6 +15,9 @@ const log = new LogFile();
 // EXPORTS
 module.exports = async function () {
   try {
+    // TODO: Add sideloading route
+    // TODO: Add forced overwrite route
+
     let dataDump = false;
 
     await log.init();
@@ -29,6 +32,8 @@ module.exports = async function () {
       console.log(`External Date (GMT): ${externalUpdateDate}`);
       dataDump = true;
     }
+
+    // TODO: Check error flag in log file. If previous update attempt was aborted, then push through with an update attempt.
 
     // No need to update the DB if the internal data date matches the external data date
     if (internalUpdateDate === externalUpdateDate) {
