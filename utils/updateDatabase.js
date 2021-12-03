@@ -7,6 +7,7 @@
 const fs = require('fs');
 const superagent = require('superagent');
 const Report = require('./../models/reportModel');
+const AgeGroup = require('./../models/ageGroupModel');
 
 const LogFile = require('../utils/logFile.js');
 const log = new LogFile();
@@ -48,6 +49,9 @@ module.exports = async function () {
     await addDataToDatabase(refactoredReports, 'report', dataDump);
 
     // TODO: region aggreation
+    const ageGroups = await aggregateAgeGroupData();
+    await addDataToDatabase(ageGroups, 'ageGroup', dataDump);
+
     // TODO: age group aggreation
 
     await log.addValue(process.env.DB_DATA_DATE_VAR_NAME, externalUpdateDate);
@@ -140,7 +144,10 @@ const refactorExternalData = async function (incomingData, dumpData = false) {
 const clearCollections = async function () {
   try {
     //TODO: Error handling
-    const query = await Report.deleteMany({});
+    const query = await Promise.all([
+      Report.deleteMany({}),
+      AgeGroup.deleteMany({}),
+    ]);
     return query;
   } catch (error) {
     console.log(error);
@@ -191,6 +198,55 @@ const addDataToDatabase = async function (dataset, datatype, dataDump = false) {
 // Aggregate the report data into groups by age group
 const aggregateAgeGroupData = async function () {
   // TODO: Flesh out method
+  try {
+    const ageGroups = await Report.aggregate([
+      {
+        $bucket: {
+          groupBy: '$ageGroup',
+          boundaries: [
+            '0-9 Years',
+            '10-19 Years',
+            '20-29 Years',
+            '30-39 Years',
+            '40-49 Years',
+            '50-59 Years',
+            '60-69 Years',
+            '70-79 Years',
+            '80+ Years',
+            'Missing',
+            'Other',
+          ],
+          default: 'Other',
+          output: {
+            regionData: {
+              $push: {
+                region: '$region',
+                numberOfCases: '$numberOfCases',
+                numberOfHospitalizations: '$numberOfHospitalizations',
+                numberOfDeaths: '$numberOfDeaths',
+              },
+            },
+            numberOfCases: { $sum: '$numberOfCases' },
+            numberOfHospitalizations: { $sum: '$numberOfHospitalizations' },
+            numberOfDeaths: { $sum: '$numberOfDeaths' },
+          },
+        },
+      },
+    ]);
+
+    for await (const group of ageGroups) {
+      try {
+        group.ageGroup = group._id;
+        delete group._id;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return ageGroups;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // Aggregate the report data into groups by region
