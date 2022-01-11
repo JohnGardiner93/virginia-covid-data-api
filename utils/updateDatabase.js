@@ -14,10 +14,9 @@ const log = new LogFile();
 
 ////////////////////////////////////////////
 // EXPORTS
-module.exports = async function () {
+module.exports = async function (overwrite = false) {
   try {
     // TODO: Add sideloading route
-    // TODO: Add forced overwrite route
 
     let dataDump = false;
 
@@ -31,13 +30,14 @@ module.exports = async function () {
     if (process.env.NODE_ENV === 'development') {
       console.log(`Internal Date (GMT): ${internalUpdateDate}`);
       console.log(`External Date (GMT): ${externalUpdateDate}`);
+      console.log(`Overwrite enabled: ${overwrite}`);
       dataDump = true;
     }
 
     // TODO: Check error flag in log file. If previous update attempt was aborted, then push through with an update attempt.
 
     // No need to update the DB if the internal data date matches the external data date
-    if (internalUpdateDate === externalUpdateDate) {
+    if (internalUpdateDate === externalUpdateDate && !overwrite) {
       console.log('Dates match: Data will not be retrieved');
       return;
     }
