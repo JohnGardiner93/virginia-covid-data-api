@@ -12,7 +12,9 @@ class LogFile {
     this.filePath = filePath;
   }
 
+  // If content is provided during init, the existing file will be overwritten with the new content. Otherwise, the existing file will be used.
   init = async function (content) {
+    // TODO: Add trycatch.
     const overwrite = content ? true : false;
     await this.write(content, overwrite);
     this.content = await this.read();
